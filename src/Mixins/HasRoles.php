@@ -3,6 +3,7 @@
 namespace SachinKiranti\AclEase\Mixins;
 
 use Illuminate\Support\Arr;
+use SachinKiranti\AclEase\Models\Role;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait HasRoles
@@ -13,7 +14,7 @@ trait HasRoles
      */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany( config('acl-ease.model') );
+        return $this->belongsToMany( config('acl-ease.models.role', Role::class) );
     }
 
     /**
@@ -52,12 +53,14 @@ trait HasRoles
 
         foreach($roles as $role)
         {
-            if($role->name === \Foundation\Lib\Role::DEFAULT_ROLE)
+            if($role->name === config('acl-ease.default_role', 'admin'))
             {
                 return true;
             }
             return $role->inRole($permission);
         }
+
+        return false;
     }
 
     public function hasPermission($permission): bool
