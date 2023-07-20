@@ -71,12 +71,12 @@ class GeneratePermission extends Command
      */
     public function handle(): void
     {
-        $this->info('Permission generator is started ... !!!');
+        $this->info('Automatically Generating Permissions Based on Route Names ... !!!');
 
         $permissions = $this->cachePermissions($this->retrievePermissions());
         $this->savePermissions($permissions);
 
-        $this->info('Successfully generated !!!');
+        $this->info('Permission Generation Complete! Automatically Created Permissions Using Route Names.');
     }
 
     /**
