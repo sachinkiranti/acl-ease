@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Sachinkiranti\\AclEase\\": "src/"
+            "SachinKiranti\\AclEase\\": "src/"
         }
     },
     "autoload-dev": {
