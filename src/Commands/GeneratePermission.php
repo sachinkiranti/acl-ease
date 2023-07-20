@@ -46,6 +46,8 @@ class GeneratePermission extends Command
      */
     private Router $router;
 
+    private int $totalIgnored = 0;
+
     # This file name will be used to cache the generated permissions
     const PERMISSION_LIST_FILE_NAME = 'acl-ease.php';
 
@@ -74,9 +76,33 @@ class GeneratePermission extends Command
         $this->info('Automatically Generating Permissions Based on Route Names ... !!!');
 
         $permissions = $this->cachePermissions($this->retrievePermissions());
-        $this->savePermissions($permissions);
+        $progressBar = $this->output->createProgressBar(count($permissions));
 
-        $this->info('Permission Generation Complete! Automatically Created Permissions Using Route Names.');
+        $progressBar->setFormat(
+            "Total Permission Generated : <info>%current_step%</info>\n[%bar%]\nGenerated permission for: <info>%permission_name%</info>\nTotal Time Taken : <info>%elapsed%</info>\nTotal Ignored : <info>%total_ignored%</info>"
+        );
+
+        $progressBar->setBarCharacter("-");
+        $progressBar->setEmptyBarCharacter("<fg=red>_</>");
+        $progressBar->setProgressCharacter("<fg=green>➤</>");
+
+        $progressBar->start();
+
+        foreach ($permissions as $index => $permission) {
+            $progressBar->setMessage($index + 1, 'current_step');
+            $progressBar->setMessage(($index + 1) === count($permissions) ? 'ALL' :$permission, 'permission_name');
+            $progressBar->setMessage($this->totalIgnored, 'total_ignored');
+            $this->savePermission($permission);
+            // usleep(500000);
+            $progressBar->advance();
+
+        }
+
+        $progressBar->finish();
+
+        $this->newLine();
+
+        $this->info("Permission Generation Complete! Automatically Created Permissions Using Route Names.");
     }
 
     /**
@@ -108,20 +134,16 @@ class GeneratePermission extends Command
     /**
      * Save permissions
      *
-     * @param array $permissions
+     * @param string $permission
      */
-    private function savePermissions(array $permissions): void
+    private function savePermission(string $permission): void
     {
-        foreach ($permissions as $permission) :
+        $description = $this->resolvePermissionDescription($permission);
 
-            $description = $this->resolvePermissionDescription($permission);
-
-            app($this->config->get('acl-ease.models.permission'))->updateOrCreate(
-                [ 'slug' => $permission, ],
-                [ 'name' => $description, 'slug' => $permission, 'description' => $description, ]
-            );
-
-        endforeach;
+        app($this->config->get('acl-ease.models.permission'))->updateOrCreate(
+            [ 'slug' => $permission, ],
+            [ 'name' => $description, 'slug' => $permission, 'description' => $description, ]
+        );
     }
 
     /**
@@ -162,7 +184,11 @@ class GeneratePermission extends Command
             if (!in_array($route->getName(), $ignoredRoutes)) {
                 if ($route->getName()) {
                     $permissions[] = $this->resolvePermissionSlug($route->getName());
+                } else {
+                    $this->totalIgnored += 1;
                 }
+            } else {
+                $this->totalIgnored += 1;
             }
 
         endforeach;
