@@ -1,6 +1,9 @@
 <?php
 
 return [
+    # Show progress information while generating permission
+    'progress' => env('ACL_EASE_PROGRESS', false),
+
     # Middleware alias
     'middleware_alias' => 'acl',
 

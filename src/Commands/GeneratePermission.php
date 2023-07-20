@@ -75,32 +75,43 @@ class GeneratePermission extends Command
     {
         $this->info('Automatically Generating Permissions Based on Route Names ... !!!');
 
+        $showProgress = $this->config->get('acl-ease.progress', false);
+
         $permissions = $this->cachePermissions($this->retrievePermissions());
-        $progressBar = $this->output->createProgressBar(count($permissions));
 
-        $progressBar->setFormat(
-            "Total Permission Generated : <info>%current_step%</info>\n[%bar%]\nGenerated permission for: <info>%permission_name%</info>\nTotal Time Taken : <info>%elapsed%</info>\nTotal Ignored : <info>%total_ignored%</info>"
-        );
+        if ($showProgress) {
+            $progressBar = $this->output->createProgressBar(count($permissions));
 
-        $progressBar->setBarCharacter("-");
-        $progressBar->setEmptyBarCharacter("<fg=red>_</>");
-        $progressBar->setProgressCharacter("<fg=green>➤</>");
+            $progressBar->setFormat(
+                "Total Permission Generated : <info>%current_step%</info>\n[%bar%]\nGenerated permission for: <info>%permission_name%</info>\nTotal Time Taken : <info>%elapsed%</info>\nTotal Ignored : <info>%total_ignored%</info>"
+            );
 
-        $progressBar->start();
+            $progressBar->setBarCharacter("-");
+            $progressBar->setEmptyBarCharacter("<fg=red>_</>");
+            $progressBar->setProgressCharacter("<fg=green>➤</>");
 
-        foreach ($permissions as $index => $permission) {
-            $progressBar->setMessage($index + 1, 'current_step');
-            $progressBar->setMessage(($index + 1) === count($permissions) ? 'ALL' :$permission, 'permission_name');
-            $progressBar->setMessage($this->totalIgnored, 'total_ignored');
-            $this->savePermission($permission);
-            // usleep(500000);
-            $progressBar->advance();
-
+            $progressBar->start();
         }
 
-        $progressBar->finish();
+        foreach ($permissions as $index => $permission) {
+            if ($showProgress) {
+                $progressBar->setMessage($index + 1, 'current_step');
+                $progressBar->setMessage(($index + 1) === count($permissions) ? 'ALL' :$permission, 'permission_name');
+                $progressBar->setMessage($this->totalIgnored, 'total_ignored');
+            }
 
-        $this->newLine();
+            $this->savePermission($permission);
+            // usleep(500000);
+
+            if ($showProgress) {
+                $progressBar->advance();
+            }
+        }
+
+        if ($showProgress) {
+            $progressBar->finish();
+            $this->newLine();
+        }
 
         $this->info("Permission Generation Complete! Automatically Created Permissions Using Route Names.");
     }
