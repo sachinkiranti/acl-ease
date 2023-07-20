@@ -116,7 +116,7 @@ class GeneratePermission extends Command
 
             $description = $this->resolvePermissionDescription($permission);
 
-            app($this->config->get('acl-ease.table'))->updateOrCreate(
+            app($this->config->get('acl-ease.models.permission'))->updateOrCreate(
                 [ 'slug' => $permission, ],
                 [ 'name' => $description, 'slug' => $permission, 'description' => $description, ]
             );
@@ -160,7 +160,9 @@ class GeneratePermission extends Command
         foreach ($this->router->getRoutes() as $route) :
 
             if (!in_array($route->getName(), $ignoredRoutes)) {
-                $permissions[] = $this->resolvePermissionSlug($route->getName());
+                if ($route->getName()) {
+                    $permissions[] = $this->resolvePermissionSlug($route->getName());
+                }
             }
 
         endforeach;
