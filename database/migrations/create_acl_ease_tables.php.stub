@@ -1,0 +1,69 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+return new class extends Migration
+{
+
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('roles', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->longText('description')->nullable();
+            $table->boolean('status')->default(1);
+            $table->bigInteger('parent_id')->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->longText('description')->nullable();
+            $table->boolean('status')->default(1);
+            $table->timestamps();
+        });
+
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->bigIncrements('id');
+
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('user_id');
+
+//            $table->foreign('user_id')->references('id')
+//                ->on('users')->onDelete('cascade');
+//           $table->foreign('role_id')->references('id')
+//                ->on('roles')->onDelete('cascade');
+
+            $table->timestamps();
+        });
+
+        Schema::create('permission_role', function (Blueprint $table) {
+            $table->bigIncrements('id');
+
+            $table->unsignedInteger('role_id');
+            $table->unsignedInteger('permission_id');
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('permission_role');
+    }
+
+};
