@@ -1,0 +1,51 @@
+{
+    "name": "sachinkiranti/acl-ease",
+    "description": "AclEase - Simplified ACL Plugin for Laravel.",
+    "keywords": [
+        "laravel",
+        "acl",
+        "permission",
+        "access"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/sachinkiranti/acl-ease/issues",
+        "source": "https://github.com/sachinkiranti/acl-ease"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sachinkiranti\\AclEase\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SachinKiranti\\AclEase\\Tests\\": "tests"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sachin Rai",
+            "email": "sachinkiranti@gmail.com",
+            "homepage": "https://raisachin.com.np",
+            "role": "Maintainer"
+        }
+    ],
+    "require": {
+        "ext-json": "*",
+        "php": "^8.0|^8.1",
+        "illuminate/support": "^8.0|^9.0|^10.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SachinKiranti\\AclEase\\AclEaseServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
