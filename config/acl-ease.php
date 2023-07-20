@@ -2,7 +2,7 @@
 
 return [
     # Middleware alias
-    'middleware' => 'middleware_alias',
+    'middleware' => 'acl',
 
     # Default Role
     'default_role' => 'admin',
